@@ -1,0 +1,90 @@
+[gd_scene load_steps=7 format=2]
+
+[ext_resource path="res://addons/asset_preview/AssetPreviewDock.gd" type="Script" id=1]
+[ext_resource path="res://addons/asset_preview/SpatialPreview.gd" type="Script" id=2]
+[ext_resource path="res://addons/asset_preview/PreviewViewportContainer.gd" type="Script" id=3]
+
+[sub_resource type="Environment" id=3]
+ambient_light_color = Color( 0.447059, 0.447059, 0.447059, 1 )
+
+[sub_resource type="World" id=2]
+environment = SubResource( 3 )
+
+[sub_resource type="CubeMesh" id=1]
+
+[node name="Asset Preview" type="VBoxContainer"]
+margin_right = 338.0
+margin_bottom = 484.0
+script = ExtResource( 1 )
+
+[node name="Top" type="HBoxContainer" parent="."]
+margin_right = 338.0
+margin_bottom = 24.0
+
+[node name="FolderPath" type="LineEdit" parent="Top"]
+margin_right = 274.0
+margin_bottom = 24.0
+size_flags_horizontal = 3
+text = "folder/path"
+editable = false
+
+[node name="RefreshButton" type="Button" parent="Top"]
+margin_left = 278.0
+margin_right = 338.0
+margin_bottom = 24.0
+text = "Refresh"
+
+[node name="VSplitContainer" type="VSplitContainer" parent="."]
+margin_top = 28.0
+margin_right = 338.0
+margin_bottom = 484.0
+size_flags_vertical = 3
+
+[node name="FileList" type="ItemList" parent="VSplitContainer"]
+margin_right = 338.0
+margin_bottom = 222.0
+size_flags_vertical = 3
+
+[node name="ViewportContainer" type="ViewportContainer" parent="VSplitContainer"]
+visible = false
+margin_top = 234.0
+margin_right = 338.0
+margin_bottom = 456.0
+size_flags_vertical = 3
+stretch = true
+script = ExtResource( 3 )
+
+[node name="Viewport" type="Viewport" parent="VSplitContainer/ViewportContainer"]
+size = Vector2( 150, 100 )
+own_world = true
+world = SubResource( 2 )
+transparent_bg = true
+handle_input_locally = false
+render_target_update_mode = 0
+
+[node name="SpatialPreview" type="Spatial" parent="VSplitContainer/ViewportContainer/Viewport"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -0.079051, -0.0121474, 0.287067 )
+script = ExtResource( 2 )
+
+[node name="SpatialPreviewSocket" type="Spatial" parent="VSplitContainer/ViewportContainer/Viewport/SpatialPreview"]
+
+[node name="MeshInstance" type="MeshInstance" parent="VSplitContainer/ViewportContainer/Viewport/SpatialPreview/SpatialPreviewSocket"]
+mesh = SubResource( 1 )
+skeleton = NodePath("../..")
+material/0 = null
+
+[node name="Camera" type="Camera" parent="VSplitContainer/ViewportContainer/Viewport/SpatialPreview"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 2.8286 )
+current = true
+
+[node name="DirectionalLight" type="DirectionalLight" parent="VSplitContainer/ViewportContainer/Viewport/SpatialPreview"]
+transform = Transform( 0.242697, 0.935857, -0.255481, -0.584587, 0.351255, 0.731354, 0.774181, -0.0281465, 0.632338, 7.45058e-09, 0, 0 )
+
+[node name="DebugLabel" type="Label" parent="VSplitContainer"]
+margin_top = 234.0
+margin_bottom = 456.0
+size_flags_horizontal = 2
+size_flags_vertical = 3
+
+[connection signal="pressed" from="Top/RefreshButton" to="." method="_on_RefreshButton_pressed"]
+[connection signal="item_selected" from="VSplitContainer/FileList" to="." method="_on_FileList_item_selected"]
